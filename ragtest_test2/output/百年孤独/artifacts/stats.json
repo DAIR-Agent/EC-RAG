@@ -1,0 +1,22 @@
+{
+    "total_runtime": 3.338174343109131,
+    "num_documents": 20,
+    "input_load_time": 0,
+    "workflows": {
+        "create_base_documents": {
+            "overall": 0.05972909927368164,
+            "0_unroll": 0.004728555679321289,
+            "1_select": 0.0028116703033447266,
+            "2_rename": 0.0029075145721435547,
+            "3_join": 0.008790969848632812,
+            "4_aggregate_override": 0.005817413330078125,
+            "5_join": 0.012671232223510742,
+            "6_rename": 0.00413060188293457,
+            "7_convert": 0.015717506408691406
+        },
+        "create_final_documents": {
+            "overall": 0.008754253387451172,
+            "0_rename": 0.004648923873901367
+        }
+    }
+}

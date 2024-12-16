@@ -1,0 +1,10 @@
+{
+    "TAVILY_API_KEY": "your_tavily_api_key",
+    "INPUT_RAG_DIR": "./ragtest/output/20240719-083949/artifacts",
+    "GRAPHRAG_API_KEY": "sk-zchhNpDArwDpv1rxE1AcB005E4Fc4554A31fDaEf1a30F9C7",
+    "GRAPHRAG_API_KEY_EMBEDDING": "sk-zchhNpDArwDpv1rxE1AcB005E4Fc4554A31fDaEf1a30F9C7",
+    "GRAPHRAG_LLM_MODEL": "gemma2:latest",
+    "API_BASE": "http://127.0.0.1:11434/v1",
+    "API_BASE_EMBEDDING": "http://127.0.0.1:11434/api",
+    "GRAPHRAG_EMBEDDING_MODEL": "nomic-embed-text:latest"
+}

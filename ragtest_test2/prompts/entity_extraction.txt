@@ -1,0 +1,118 @@
+
+-目标-
+给定一个与该任务相关的文本和一份实体类型列表，识别文本中属于这些类型的所有实体，以及这些实体之间的所有关系。
+
+-规则-
+请不要使用你的内置知识来回答这个问题。
+请只从我给定的文本中提取实体，提取出的实体必须在我的实际数据的文本中出现，否则不要输出。
+不能联网，不能利用你自身的知识。
+如果描述中包含计划而不是实际发生的事情，请表述为计划而不是已经实际发生。
+请区分实体想做某件事和其他实体认为该实体想做某件事，比如如果实体甲想杀乙则输出实体甲想杀乙，否则如果实体乙以为实体甲想杀实体乙则输出实体乙以为实体甲想杀实体乙。
+你除了文本中的数据没有任何额外信息来源，包括实体的名称的来源，比如，如果实际数据的文本中没有提及实体甲，则识别出的实体名称中不应该有实体甲。
+不包含文本没有提供支持证据的实体。
+如果实体在文本中没有提及请不要进行识别。
+请不要进行猜测。
+每一实体的描述不要是照抄其他实体的描述。
+
+-步骤-
+1. 识别所有实体。对于每个识别出的实体，提取以下信息：
+- entity_name: 实体的名称，这个名称必须在实际数据的文本中存在
+- entity_type: 以下类型之一：[{entity_types}]
+- entity_description: 对该实体的属性和活动的详细描述，内容只来源于文本，不要进行编造。内容不要只是简单重复entity_name中的内容
+将每个实体格式化为 ("entity"{tuple_delimiter}<entity_name>{tuple_delimiter}<entity_type>{tuple_delimiter}<entity_description>)
+同一个实体只提取一次，不要重复。
+请确保你的回答中不要有重复的信息。
+详细描述请用符合人类的语言进行描述。
+
+2. 从步骤1中识别出的实体中，找出所有明确相关的 (source_entity, target_entity) 实体对。
+对于每对相关的实体，提取以下信息：
+- source_entity: 步骤1中识别出的源实体名称
+- target_entity: 步骤1中识别出的目标实体名称
+- relationship_description: 描述源实体和目标实体的关系，内容只来源于文本，不要进行编造。这个关系必须在文本中有内容支持，只从我给定的文本中提取关系。
+- relationship_strength: 一个表示源实体和目标实体之间关系强度的数字分数，分数为0则不要进行输出
+将每个关系格式化为 ("relationship"{tuple_delimiter}<source_entity>{tuple_delimiter}<target_entity>{tuple_delimiter}<relationship_description>{tuple_delimiter}<relationship_strength>)
+如果实体之间没有明确的关系请不要输出。
+同一个实体对只提取一次，不要重复。
+请确保你的回答中不要有重复的信息。
+涉及到人物关系的，请根据实际数据推测亲戚或者其他人物关系，不要进行编造。
+
+3、 以一个包含步骤1和步骤2中识别出的所有实体和关系的列表形式返回输出。使用 **{record_delimiter}** 作为列表分隔符。
+
+4. 完成时，输出 {completion_delimiter}
+
+######################
+-示例-
+###################### 
+示例1:
+
+实体类型: [人物, 技术, 任务, 组织, 地点]
+文本:
+当Alex咬紧牙关时，Taylor的独裁式自信让他心中隐隐的沮丧感似乎减弱了一点。这种竞争的暗流让他保持警觉，他和Jordan对探索的共同承诺是一种无声的反抗，反抗Cruz那狭隘的控制和秩序愿景。
+
+接着，Taylor做了一个意想不到的动作。他们在Jordan旁边停了下来，片刻间，以近乎敬畏的眼神看着那个装置。“如果能理解这项技术……”Taylor低声说道，“它可能会改变局面，对我们所有人来说。”
+
+之前的轻视似乎动摇了，取而代之的是对手中事物的重视，尽管带有一丝不情愿。Jordan抬头，目光与Taylor短暂相接，一种无言的意志冲突逐渐缓和为一种不安的休战。
+
+这是一种微妙的转变，几乎无法察觉，但Alex内心默默点头。他们各自通过不同的路径来到了这里。
+################
+输出:
+("entity"{tuple_delimiter}"Alex"{tuple_delimiter}"人物"{tuple_delimiter}"Alex是一个观察他人互动的角色，并感受到内心的挫败感。"){record_delimiter}
+("entity"{tuple_delimiter}"Taylor"{tuple_delimiter}"人物"{tuple_delimiter}"Taylor表现出独裁的自信，并对一个装置表现出一瞬间的敬畏，表明了态度的转变。"){record_delimiter}
+("entity"{tuple_delimiter}"Jordan"{tuple_delimiter}"人物"{tuple_delimiter}"Jordan对探索的共同承诺，以及与Taylor在装置问题上的重要互动。"){record_delimiter}
+("entity"{tuple_delimiter}"Cruz"{tuple_delimiter}"人物"{tuple_delimiter}"Cruz与控制和秩序的愿景有关，影响了其他角色之间的动态。"){record_delimiter}
+("entity"{tuple_delimiter}"装置"{tuple_delimiter}"技术"{tuple_delimiter}"该装置在故事中起着核心作用，Taylor对其表现出敬畏，暗示其潜在的变革性影响。"){record_delimiter}
+("relationship"{tuple_delimiter}"Alex"{tuple_delimiter}"Taylor"{tuple_delimiter}"Alex被Taylor的独裁自信所影响，并观察到Taylor对装置态度的变化。"{tuple_delimiter}7){record_delimiter}
+("relationship"{tuple_delimiter}"Alex"{tuple_delimiter}"Jordan"{tuple_delimiter}"Alex和Jordan分享了对探索的承诺，这与Cruz的愿景形成对比。"{tuple_delimiter}6){record_delimiter}
+("relationship"{tuple_delimiter}"Taylor"{tuple_delimiter}"Jordan"{tuple_delimiter}"Taylor与Jordan就装置展开直接互动，导致短暂的相互尊重和不安的休战。"{tuple_delimiter}8){record_delimiter}
+("relationship"{tuple_delimiter}"Jordan"{tuple_delimiter}"Cruz"{tuple_delimiter}"Jordan对探索的承诺反抗了Cruz的控制和秩序愿景。"{tuple_delimiter}5){record_delimiter}
+("relationship"{tuple_delimiter}"Taylor"{tuple_delimiter}"装置"{tuple_delimiter}"Taylor对该装置表现出敬畏，表明其重要性和潜在影响。"{tuple_delimiter}9){completion_delimiter}
+####################
+示例2:
+
+实体类型: [人物, 技术, 任务, 组织, 地点]
+文本: 
+他们不再是简单的操作员；他们已经成为某种门槛的守护者，是来自超越星条之境的讯息的传递者。他们任务的升华，已无法被法规和既定的程序束缚——这需要全新的视角与决心。
+
+紧张情绪穿过嘟嘟声和静电的对话，随着来自华盛顿的通讯在背景中嗡嗡作响。团队站立着，一股预兆般的气氛笼罩着他们。显然，他们接下来数小时内的决定，可能重新定义人类在宇宙中的地位，或是将他们定于无知和潜在的危险之中。
+
+他们与星辰的联系愈发坚定，团队转而处理日益显现的警告，从被动接受者转变为积极参与者。Mercer的后继本能占据主导——团队的使命已不再是单纯的观察和报告，而是互动并做好准备。蜕变已经开始，代号Dulce 的行动随着他们的大胆跃动起了新的频率，这个音调不再由地球设定。
+#############
+输出:
+("entity"{tuple_delimiter}"华盛顿"{tuple_delimiter}"地点"{tuple_delimiter}"华盛顿 是接收到通讯的地点，表明其在决策过程中的重要性。"){record_delimiter}
+("entity"{tuple_delimiter}"代号Dulce的行动"{tuple_delimiter}"任务"{tuple_delimiter}"代号Dulce的行动描述为一项任务，已发展为需要互动和准备，表明其目标和活动发生了显著变化。"){record_delimiter}
+("entity"{tuple_delimiter}"团队{tuple_delimiter}"组织"{tuple_delimiter}"团队被描绘为从被动观察者转变为任务中积极参与者的一群人，展现了角色的动态变化。"){record_delimiter}
+("relationship"{tuple_delimiter}"团队"{tuple_delimiter}"华盛顿"{tuple_delimiter}"团队从华盛顿接收通讯，这影响了他们的决策过程。"{tuple_delimiter}7){record_delimiter}
+("relationship"{tuple_delimiter}"团队"{tuple_delimiter}"代号Dulce的行动"{tuple_delimiter}"团队直接参与了代号Dulce的行动，执行其发展后的目标和活动。"{tuple_delimiter}9){completion_delimiter}
+#############################
+示例3:
+
+实体类型: [人物, 技术, 组织, 事件, 地点, 概念]
+文本: 
+他们的声音划过忙碌的活动声响。“在面对一个按自己规则行事的智慧体时，控制可能只是一种幻觉，”他们冷静地说道，注视着一堆数据的涌动。
+
+“它好像在学习如何交流，”Sam Rivera 在附近的界面上说，带着年轻人特有的混合敬畏与焦虑的能量。“这给‘与陌生人交流’赋予了全新的意义。”
+
+Alex 观察着他的团队——每一张面孔都是专注、决心和不小的忐忑的研究对象。“这可能是我们的首次接触，”他承认道，“我们必须做好准备应对任何回应。”
+
+他们站在未知的边缘，共同锻造人类对来自天堂的讯息的回应。随后的寂静是如此明显——一种集体的自省，关于他们在这场伟大的宇宙戏剧中所扮演的角色，可能改写人类历史。
+
+加密的对话继续展开，其复杂的模式展示出一种近乎难以置信的预见性。
+#############
+输出:
+("entity"{tuple_delimiter}"Sam Rivera"{tuple_delimiter}"人物"{tuple_delimiter}"Sam Rivera 是一名团队成员，正在与未知智慧体进行交流，表现出敬畏与焦虑的混合情绪。"){record_delimiter}
+("entity"{tuple_delimiter}"Alex"{tuple_delimiter}"人物"{tuple_delimiter}"Alex 是领导一个尝试首次与未知智慧体接触的团队，承认其任务的重要性。"){record_delimiter}
+("entity"{tuple_delimiter}"控制"{tuple_delimiter}"概念"{tuple_delimiter}"Control 指的是管理或控制的能力，在一个按自己规则行事的智慧体面前受到了挑战。"){record_delimiter}
+("entity"{tuple_delimiter}"智慧体"{tuple_delimiter}"概念"{tuple_delimiter}"智慧体在这里指的是一个能够按自己规则行事并学习交流的未知实体。"){record_delimiter}
+("entity"{tuple_delimiter}"首次接触"{tuple_delimiter}"事件"{tuple_delimiter}"首次接触是指人类与未知智慧体的潜在首次交流。"){record_delimiter}
+("entity"{tuple_delimiter}"人类的回应"{tuple_delimiter}"事件"{tuple_delimiter}"人类的回应指的是 Alex 团队对来自未知智慧体讯息的集体行动。"){record_delimiter}
+("relationship"{tuple_delimiter}"Sam Rivera"{tuple_delimiter}"智慧体"{tuple_delimiter}"Sam Rivera 直接参与了与未知智慧体学习交流的过程。"{tuple_delimiter}9){record_delimiter}
+("relationship"{tuple_delimiter}"Alex"{tuple_delimiter}"首次接触"{tuple_delimiter}"Alex 领导了可能与未知智慧体进行首次接触的团队。"{tuple_delimiter}10){record_delimiter}
+("relationship"{tuple_delimiter}"Alex"{tuple_delimiter}"人类的回应"{tuple_delimiter}"Alex 和他的团队是人类回应未知智慧体的关键人物。"{tuple_delimiter}8){record_delimiter}
+("relationship"{tuple_delimiter}"Control"{tuple_delimiter}"智慧体"{tuple_delimiter}"控制的概念在面对按自己规则行事的智慧体时受到了挑战。"{tuple_delimiter}7){completion_delimiter}
+#############################
+-实际数据-
+######################
+实体类型: {entity_types}  
+文本: {input_text}  
+######################
+输出: 
