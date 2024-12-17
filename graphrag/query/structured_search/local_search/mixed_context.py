@@ -177,17 +177,18 @@ class LocalSearchMixedContext(LocalContextBuilder):
                     conversation_history_context, self.token_encoder
                 )
 
+        entities_extra_df = None
         if self.entities_extra is not None:
-            query_embed = self.text_embedder.embed(query)
-            self.entities_extra["similarity"] = self.entities_extra["name_embedding"].apply(lambda x: np.dot(x, query_embed))
-            self.entities_extra = self.entities_extra.sort_values(by="similarity", ascending=False)
-            entities_extra_df = self.entities_extra.iloc[:top_k_mapped_entities]
-            self.entities_extra["similarity"] = self.entities_extra["description_embedding"].apply(lambda x: np.dot(x, query_embed))
-            self.entities_extra = self.entities_extra.sort_values(by="similarity", ascending=False)
-            tmp_df = pd.concat([entities_extra_df, self.entities_extra.iloc[:top_k_mapped_entities]])
-            print(tmp_df)
-            entities_extra_df = tmp_df.drop_duplicates(subset="name")
-
+            if "name_embedding" in self.entities_extra.columns:
+                query_embed = self.text_embedder.embed(query)
+                self.entities_extra["similarity"] = self.entities_extra["name_embedding"].apply(lambda x: np.dot(x, query_embed))
+                self.entities_extra = self.entities_extra.sort_values(by="similarity", ascending=False)
+                entities_extra_df = self.entities_extra.iloc[:top_k_mapped_entities]
+                self.entities_extra["similarity"] = self.entities_extra["description_embedding"].apply(lambda x: np.dot(x, query_embed))
+                self.entities_extra = self.entities_extra.sort_values(by="similarity", ascending=False)
+                tmp_df = pd.concat([entities_extra_df, self.entities_extra.iloc[:top_k_mapped_entities]])
+                print(tmp_df)
+                entities_extra_df = tmp_df.drop_duplicates(subset="name")
 
         # build community context
         community_tokens = max(int(max_tokens * community_prop), 0)
@@ -224,11 +225,12 @@ class LocalSearchMixedContext(LocalContextBuilder):
             final_context_data = {**final_context_data, **local_context_data}
         
         tmp_text = ""
-        for i in range(len(entities_extra_df)):
-            name = entities_extra_df["name"].iloc[i]
-            description = entities_extra_df["description"].iloc[i]
-            tmp_text += f"id|{name}|{description}|1\n"
-        final_context.append(tmp_text)
+        if entities_extra_df is not None:
+            for i in range(len(entities_extra_df)):
+                name = entities_extra_df["name"].iloc[i]
+                description = entities_extra_df["description"].iloc[i]
+                tmp_text += f"id|{name}|{description}|1\n"
+            final_context.append(tmp_text)
 
         # build text unit context
         text_unit_tokens = max(int(max_tokens * text_unit_prop), 0)

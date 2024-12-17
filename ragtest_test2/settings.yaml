@@ -9,7 +9,7 @@ llm:
   model_supports_json: true # recommended if this is available for your model.
   # max_tokens: 8000
   # request_timeout: 90.0
-  api_base: http://172.31.0.39:8099/v1
+  api_base: http://127.0.0.1:8099/v1
   # api_base: https://api.moonshot.cn/v1
   # api_version: 2024-02-15-preview
   # organization: <organization_id>

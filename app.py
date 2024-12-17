@@ -672,8 +672,9 @@ def send_message(query_type, query, history, system_message, temperature, max_to
                 #### RETRIEVAL and GENERATION ####
 
                 history_text = ""
-                for i in range(len(history)):
-                    history_text += f"User: {history[i][0]}, System: {history[i][1]} "
+                if history is not None:
+                    for i in range(len(history)):
+                        history_text += f"User: {history[i][0]}, System: {history[i][1]} "
 
                 # Prompt 提示词中的文本修改为中文
                 prompt = hub.pull("rlm/rag-prompt")
@@ -840,8 +841,9 @@ def send_message(query_type, query, history, system_message, temperature, max_to
                     #### RETRIEVAL and GENERATION ####
 
                     history_text = ""
-                    for i in range(len(history)):
-                        history_text += f"User: {history[i][0]}, System: {history[i][1]} "
+                    if history is not None:
+                        for i in range(len(history)):
+                            history_text += f"User: {history[i][0]}, System: {history[i][1]} "
 
                     # Prompt 提示词中的文本修改为中文
                     prompt = hub.pull("rlm/rag-prompt")
@@ -940,8 +942,9 @@ def send_message(query_type, query, history, system_message, temperature, max_to
                     #### RETRIEVAL and GENERATION ####
 
                     history_text = ""
-                    for i in range(len(history)):
-                        history_text += f"User: {history[i][0]}, System: {history[i][1]} "
+                    if history is not None:
+                        for i in range(len(history)):
+                            history_text += f"User: {history[i][0]}, System: {history[i][1]} "
 
                     # Prompt 提示词中的文本修改为中文
                     prompt = hub.pull("rlm/rag-prompt")

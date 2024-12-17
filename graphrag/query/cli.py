@@ -92,9 +92,15 @@ def run_global_search(
         )
         final_nodes_list.append(final_nodes)
 
-        final_entities: pd.DataFrame = pd.read_parquet(
-            data_path / "create_final_entities_ori.parquet"
-        )
+        try:
+            final_entities: pd.DataFrame = pd.read_parquet(
+                data_path / "create_final_entities_ori.parquet"
+            )
+        except:
+            final_entities: pd.DataFrame = pd.read_parquet(
+                data_path / "create_final_entities.parquet"
+            )
+
         final_entities_list.append(final_entities)
 
         final_community_reports: pd.DataFrame = pd.read_parquet(
@@ -199,9 +205,15 @@ def run_local_search(
         final_text_units = pd.read_parquet(data_path / "create_final_text_units.parquet")
         final_text_units_list.append(final_text_units)
 
-        final_relationships = pd.read_parquet(
-            data_path / "create_final_relationships_ori.parquet"
-        )
+        try:
+            final_relationships = pd.read_parquet(
+                data_path / "create_final_relationships_ori.parquet"
+            )
+        except:
+            final_relationships = pd.read_parquet(
+                data_path / "create_final_relationships.parquet"
+            )
+
         final_relationships_expanded = pd.read_parquet(
             data_path / "create_final_relationships.parquet"
         )
@@ -214,7 +226,11 @@ def run_local_search(
         # final_nodes = pd.read_parquet(data_path / "create_final_nodes.parquet")
         # final_nodes_list.append(final_nodes)
 
-        final_entities = pd.read_parquet(data_path / "create_final_entities_ori.parquet")
+        try:
+            final_entities = pd.read_parquet(data_path / "create_final_entities_ori.parquet")
+        except:
+            final_entities = pd.read_parquet(data_path / "create_final_entities.parquet")
+
         final_entities_expanded = pd.read_parquet(data_path / "create_final_entities.parquet")
         final_entities = final_entities[final_entities["name"].apply(lambda x: x in final_entities_expanded["name"].values)]
         # final_entities_extra = final_entities_expanded[final_entities_expanded["name"].apply(lambda x: x not in final_entities["name"].values)]
